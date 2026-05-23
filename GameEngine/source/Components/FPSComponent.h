@@ -1,0 +1,43 @@
+#pragma once
+#include "Component.h"
+#include <chrono>
+
+namespace ge
+{
+	class TextComponent;
+	class GameObject;
+
+	// Engine Component
+	class FPSComponent final : public Component
+	{
+	public:
+		// ---- TYPE IDENTIFIER ----
+		// Every Image Instance shares the same component type ID
+		static constexpr ComponentTypeID StaticTypeID{ 3 };
+
+		FPSComponent(GameObject* pOwnerPtr);
+		~FPSComponent() override = default;
+		FPSComponent(const FPSComponent& other) = delete;
+		FPSComponent(FPSComponent&& other) = delete;
+		FPSComponent& operator=(const FPSComponent& other) = delete;
+		FPSComponent& operator=(FPSComponent&& other) = delete;
+
+		virtual void FixedUpdateComponent(float) override {};
+		virtual void UpdateComponent(float) override;
+		virtual void RenderComponent() const override {};
+
+	private:
+		TextComponent* m_pTextComponent{ nullptr };
+		float m_ChangeTimer{ 0.f };
+
+		static constexpr float ChangeInterval{ 0.25f };
+
+		// FPS Logic
+		
+		float m_FpsTimer{ 0.f };
+		int m_FrameCount{ 0 };
+		float m_CurrentFPS{ 0 };
+
+		void ComputeFPS(float deltaTime);
+	};
+}
