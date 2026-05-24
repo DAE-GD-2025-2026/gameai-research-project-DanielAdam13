@@ -45,3 +45,12 @@ ImGui does:
 4. DISPLAYS THE Algorithm Stats
 -------------------------------------
 Everything supported from the ImGui is followed by a RecomputePath call from the app!
+
+
+Created a GO "handle" playing the role of an input target for the commands.
+The mouse commands are bound to the Input Manager:
+- Left: Walls
+- Right: Start Cell
+- Middle: Goal Cell
+-------------------------------------
+The Stats calculated from the path computing algorithm(AStar for now) is now stored as a member variable which is read from the IMGUI instance and displayed as text.
