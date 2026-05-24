@@ -40,7 +40,7 @@ FetchContent_MakeAvailable(imgui)
 #----------------------------------------------------------------------
 # GLM
 #----------------------------------------------------------------------
-find_package(glm CONFIG QUIET)
+find_package(glm CONFIG QUIET GLOBAL)
 if(NOT glm_FOUND)
     FetchContent_Declare(
         glm
@@ -56,7 +56,7 @@ endif()
 #   - Windows: download the prebuilt VC devel zip (gives SDL3::SDL3)
 #   - Linux/macOS: build from source (gives SDL3-shared)
 #----------------------------------------------------------------------
-find_package(SDL3 3.4 CONFIG QUIET)
+find_package(SDL3 3.4 CONFIG QUIET GLOBAL)
 if(NOT SDL3_FOUND)
     if(WIN32)
         FetchContent_Declare(
@@ -67,7 +67,7 @@ if(NOT SDL3_FOUND)
         )
         FetchContent_MakeAvailable(SDL3)
         list(PREPEND CMAKE_PREFIX_PATH "${sdl3_SOURCE_DIR}")
-        find_package(SDL3 CONFIG REQUIRED)
+        find_package(SDL3 CONFIG REQUIRED GLOBAL)
     else()
         FetchContent_Declare(
             SDL3
@@ -100,7 +100,7 @@ message(STATUS "[gameEngine] SDL3 link target: ${GAMEENGINE_SDL3_TARGET}")
 #----------------------------------------------------------------------
 # SDL3_ttf
 #----------------------------------------------------------------------
-find_package(SDL3_ttf 3.2.2 CONFIG QUIET)
+find_package(SDL3_ttf 3.2.2 CONFIG QUIET GLOBAL)
 if(NOT SDL3_ttf_FOUND)
     if(WIN32)
         FetchContent_Declare(
@@ -111,7 +111,7 @@ if(NOT SDL3_ttf_FOUND)
         )
         FetchContent_MakeAvailable(SDL3_ttf)
         list(PREPEND CMAKE_PREFIX_PATH "${sdl3_ttf_SOURCE_DIR}")
-        find_package(SDL3_ttf CONFIG REQUIRED)
+        find_package(SDL3_ttf CONFIG REQUIRED GLOBAL)
     else()
         FetchContent_Declare(
             SDL3_ttf
@@ -186,26 +186,24 @@ function(ge_install_runtime target)
         set_target_properties(${target} PROPERTIES
             VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${target}>")
 
-        # Collect any SDL runtime targets that actually exist as DLLs.
-        set(_sdl_runtime "")
-        foreach(t IN ITEMS
-            SDL3::SDL3 SDL3::SDL3-shared SDL3-shared
-            SDL3_ttf::SDL3_ttf SDL3_ttf::SDL3_ttf-shared SDL3_ttf-shared
-            SDL3_mixer::SDL3_mixer SDL3_mixer::SDL3_mixer-shared SDL3_mixer-shared)
-            if(TARGET ${t})
-                get_target_property(_type ${t} TYPE)
-                if(_type STREQUAL "SHARED_LIBRARY")
-                    list(APPEND _sdl_runtime ${t})
-                endif()
+        # Use the documented SDL3::SDL3-shared / SDL3_ttf::SDL3_ttf-shared
+        # targets that always refer to the DLL. Guard each with if(TARGET ...)
+        # so we silently skip absent ones (e.g. static-only builds, or
+        # SDL3_mixer when the game doesn't link it).
+        foreach(base IN ITEMS SDL3::SDL3 SDL3_ttf::SDL3_ttf SDL3_mixer::SDL3_mixer)
+            set(_chosen "")
+            if(TARGET ${base}-shared)
+                set(_chosen ${base}-shared)
+            elseif(TARGET ${base})
+                set(_chosen ${base})
             endif()
-        endforeach()
-
-        foreach(dll IN LISTS _sdl_runtime)
-            add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "$<TARGET_FILE:${dll}>"
-                    "$<TARGET_FILE_DIR:${target}>"
-                VERBATIM)
+            if(_chosen)
+                add_custom_command(TARGET ${target} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        "$<TARGET_FILE:${_chosen}>"
+                        "$<TARGET_FILE_DIR:${target}>"
+                    VERBATIM)
+            endif()
         endforeach()
 
     elseif(APPLE)
@@ -216,8 +214,7 @@ function(ge_install_runtime target)
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory
                 "$<TARGET_BUNDLE_DIR:${target}>/Contents/Frameworks")
-        foreach(t IN ITEMS SDL3::SDL3-shared SDL3-shared
-                          SDL3_ttf::SDL3_ttf-shared SDL3_ttf-shared)
+        foreach(t IN ITEMS SDL3::SDL3-shared SDL3_ttf::SDL3_ttf-shared)
             if(TARGET ${t})
                 add_custom_command(TARGET ${target} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -227,7 +224,6 @@ function(ge_install_runtime target)
         endforeach()
     endif()
 
-    # Copy resources next to the executable (or into the .app bundle).
     if(EXISTS "${CMAKE_SOURCE_DIR}/resources")
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory

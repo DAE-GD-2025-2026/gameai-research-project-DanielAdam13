@@ -9,10 +9,10 @@ bool jps::helpers::IsStepAllowed(const Grid& grid, int fromX, int fromY, int toX
         return false;
 
     const int distanceX{ toX - fromX };
-    const int distanceY{ toY = fromY };
+    const int distanceY{ toY - fromY };
 
     if (distanceX == 0 || distanceY == 0)
-        return false;
+        return true;
 
     // Diagonal Step:
     if (!allowCornerCutting)

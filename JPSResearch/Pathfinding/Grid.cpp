@@ -11,7 +11,7 @@ Grid::Grid(int width, int height)
 
 bool jps::Grid::InBounds(int x, int y) const noexcept
 {
-	return x >= 0 && x <= m_Width && y >= 0 && y < m_Height;
+	return x >= 0 && x < m_Width && y >= 0 && y < m_Height;
 }
 
 bool jps::Grid::InBounds(const Cell& c) const noexcept
