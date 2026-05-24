@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Services/ServiceLocator.h"
 #include "Services/InputManager.h"
+#include "Renderer.h"
 #include "Visualization/GridRendererComponent.h"
 #include "JPSControlsImGui.h"
 
@@ -12,13 +13,14 @@
 
 #include <utility>
 #include <vector>
+#include <random>
 
 namespace jps
 {
 	namespace
 	{
-		constexpr int kGridWidth{ 30 };
-		constexpr int kGridHeight{ 30 };
+		constexpr int kGridWidth{ 40 };
+		constexpr int kGridHeight{ 40 };
 	}
 }
 
@@ -26,6 +28,8 @@ using namespace jps;
 
 void JPSApp::Load()
 {
+	ge::Renderer::GetInstance().SetWindowSize({ 1200, 1200 });
+
 	// 1. Build the Grid
 	m_Grid = std::make_unique<Grid>(kGridWidth, kGridHeight);
 	BuildTestGrid();
@@ -128,6 +132,30 @@ void jps::JPSApp::SetShowExpandedCells(bool show)
 
 void jps::JPSApp::GenerateRandomWalls(int densityPercent)
 {
+	if (!m_Grid)
+		return;
+
+	std::mt19937 rng{ std::random_device{}() };
+	std::uniform_int_distribution<int> roll{ 0, 99 };
+
+	const int W{ m_Grid->GetWidth() };
+	const int H{ m_Grid->GetHeight() };
+	for (int y{ 0 }; y < H; ++y)
+	{
+		for (int x{ 0 }; x < W; ++x)
+		{
+			const Cell c{ x, y };
+
+			// Kepp start and goal clear
+			if (c == m_Start || c == m_Goal)
+			{
+				m_Grid->SetBlocked(c, false);
+				continue;
+			}
+
+			m_Grid->SetBlocked(c, roll(rng) < densityPercent);
+		}
+	}
 
 	// --------------------------------
 	// Recompute!
