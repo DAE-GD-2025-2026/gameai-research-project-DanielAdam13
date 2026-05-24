@@ -20,6 +20,9 @@ namespace jps
 		std::vector<Cell> path; // All nodes, empty if path not found
 		SearchStats stats{};
 
+		// Used for visualization:
+		std::vector<Cell> expandedCells;
+
 		bool Found() const noexcept { return !path.empty(); }
 	};
 
@@ -38,6 +41,8 @@ namespace jps
 	private:
 		heuristics::Fn m_Heuristic{ &heuristics::Octile };
 
-		bool m_AllowCornerCutting{ false };
+		bool m_AllowCornerCutting{ false }; // Off by default
+
+		bool m_TrackExpanded{ true }; // On by default
 	};
 }

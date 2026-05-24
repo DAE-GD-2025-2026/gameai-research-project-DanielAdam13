@@ -6,7 +6,7 @@ add_executable(jpsResearch WIN32
  "Pathfinding/Heuristics.h" 
  "Pathfinding/AStar.h" "Pathfinding/AStar.cpp" 
  "Pathfinding/PathFindingHelpers.h" "Pathfinding/PathFindingHelpers.cpp" 
- "Visualization/GridRendererComponent.h" "Visualization/GridRendererComponent.cpp")
+ "Visualization/GridRendererComponent.h" "Visualization/GridRendererComponent.cpp" "Commands/JPSMouseCommand.h" "Commands/JPSMouseCommand.cpp" "Commands/JPSCommands.h" "Commands/JPSCommands.cpp")
 
 target_include_directories(jpsResearch PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

@@ -32,11 +32,11 @@ void JPSApp::Load()
 	ge::SceneManager::GetInstance().SwitchToSceneWithName("JPSDemo");
 
 	auto rendererObject = std::make_unique<ge::GameObject>("GridRenderer");
-	m_pRenderer = rendererObject->AddComponent<GridRendererComponent>(rendererObject.get());
-	m_pRenderer->SetLayout(kOriginX, kOriginY, kCellSize);
-	m_pRenderer->SetGrid(m_Grid.get());
-	m_pRenderer->SetStart(m_Start);
-	m_pRenderer->SetGoal(m_Goal);
+	m_GridRenderer = rendererObject->AddComponent<GridRendererComponent>(rendererObject.get());
+	m_GridRenderer->SetLayout(kOriginX, kOriginY, kCellSize);
+	m_GridRenderer->SetGrid(m_Grid.get());
+	m_GridRenderer->SetStart(m_Start);
+	m_GridRenderer->SetGoal(m_Goal);
 
 	scene.Add(std::move(rendererObject));
 
@@ -50,6 +50,26 @@ void JPSApp::Update(float)
 }
 
 void JPSApp::FixedUpdate(float)
+{
+}
+
+void jps::JPSApp::SetHeuristic(heuristics::Fn h)
+{
+}
+
+void jps::JPSApp::SetAllowCornerCutting(bool allow)
+{
+}
+
+void jps::JPSApp::SetShowExpandedCells(bool show)
+{
+}
+
+void jps::JPSApp::GenerateRandomWalls(int densityPercent)
+{
+}
+
+void jps::JPSApp::ClearWalls()
 {
 }
 
@@ -73,10 +93,10 @@ void jps::JPSApp::BuildTestGrid()
 
 void jps::JPSApp::RecomputePath()
 {
-	if (!m_Grid || !m_pRenderer) 
+	if (!m_Grid || !m_GridRenderer) 
 		return;
 
 	const SearchResult result{ m_AStar.FindPath(*m_Grid, m_Start, m_Goal) };
 
-	m_pRenderer->SetPath(result.path);
+	m_GridRenderer->SetPath(result.path);
 }

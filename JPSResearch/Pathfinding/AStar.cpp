@@ -55,6 +55,13 @@ SearchResult jps::AStar::FindPath(const Grid& grid, Cell start, Cell goal) const
         currentRecord.inClosed = true;
         ++result.stats.nodesExpanded;
 
+        if (m_TrackExpanded)
+        {
+            const int x{ currentIdx % grid.GetWidth() };
+            const int y{ currentIdx / grid.GetWidth() };
+            result.expandedCells.push_back(Cell{ x, y });
+        }
+
         // Goal check happens on expansion (not on generation), because the
         // first time we EXPAND the goal we have its optimal g-cost.
         if (currentIdx == goalIdx)
