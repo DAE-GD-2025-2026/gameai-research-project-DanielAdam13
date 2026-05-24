@@ -11,7 +11,7 @@ namespace jps
 		explicit JPSAppMouseCommand(JPSApp* app);
 
 	protected:
-		JPSApp* m_pApp; // Non-owning ref
+		JPSApp* m_pApp; // Cached ref
 
 		// Convert pixel coords to a cell. Returns false if outside the grid.
 		bool MouseToCell(float mouseX, float mouseY, int& outX, int& outY) const;

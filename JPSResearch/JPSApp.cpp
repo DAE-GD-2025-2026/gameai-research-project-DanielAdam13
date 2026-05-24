@@ -13,9 +13,6 @@ namespace jps
 	{
 		constexpr int kGridWidth{ 30 };
 		constexpr int kGridHeight{ 30 };
-		constexpr float kCellSize{ 24.f };
-		constexpr float kOriginX{ 40.f };
-		constexpr float kOriginY{ 40.f };
 	}
 }
 
@@ -33,7 +30,7 @@ void JPSApp::Load()
 
 	auto rendererObject = std::make_unique<ge::GameObject>("GridRenderer");
 	m_GridRenderer = rendererObject->AddComponent<GridRendererComponent>(rendererObject.get());
-	m_GridRenderer->SetLayout(kOriginX, kOriginY, kCellSize);
+	m_GridRenderer->SetLayout(m_Layout.originX, m_Layout.originY, m_Layout.cellSize);
 	m_GridRenderer->SetGrid(m_Grid.get());
 	m_GridRenderer->SetStart(m_Start);
 	m_GridRenderer->SetGoal(m_Goal);
@@ -43,14 +40,6 @@ void JPSApp::Load()
 	// 3. Run the initial search and hand the result to the renderer
 	RecomputePath();
 
-}
-
-void JPSApp::Update(float)
-{
-}
-
-void JPSApp::FixedUpdate(float)
-{
 }
 
 void jps::JPSApp::ToggleWall(Cell c)
@@ -94,40 +83,68 @@ void jps::JPSApp::SetGoalCell(Cell c)
 
 void jps::JPSApp::SetHeuristic(heuristics::Fn h)
 {
+	m_AStar.SetHeuristic(h);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
 }
 
 void jps::JPSApp::SetAllowCornerCutting(bool allow)
 {
+	m_AStar.SetAllowCornerCutting(allow);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
 }
 
 void jps::JPSApp::SetShowExpandedCells(bool show)
 {
+	m_ShowExpandedCells = show;
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
 }
 
 void jps::JPSApp::GenerateRandomWalls(int densityPercent)
 {
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
 }
 
 void jps::JPSApp::ClearWalls()
 {
+	if (!m_Grid) return;
+
+	const int W{ m_Grid->GetWidth() };
+	const int H{ m_Grid->GetHeight() };
+
+	// Just set every single cell to walkable
+	for (int y{}; y < H; ++y)
+		for (int x{}; x < W; ++x)
+			m_Grid->SetBlocked(x, y, false);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
 }
 
 void jps::JPSApp::BuildTestGrid()
 {
-	for (int y{}; y < 20; ++y)
-	{
-		m_Grid->SetBlocked(15, y, true);
-	}
-
-	for (int x{5}; x < 25; ++x)
-	{
-		m_Grid->SetBlocked(x, 22, true);
-	}
-
+	for (int y{ 0 }; y < 20; ++y) m_Grid->SetBlocked(15, y, true);
+	for (int x{ 5 }; x < 25; ++x) m_Grid->SetBlocked(x, 22, true);
 	m_Grid->SetBlocked(25, 25, true);
 	m_Grid->SetBlocked(26, 25, true);
 	m_Grid->SetBlocked(25, 26, true);
-
 }
 
 void jps::JPSApp::RecomputePath()

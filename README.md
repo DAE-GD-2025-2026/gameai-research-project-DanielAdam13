@@ -15,7 +15,7 @@ This happens ONCE by simply building a test level with walls and calling the AST
 Created a base JPS mouse command class from which specific JPS game command are derived. OnClick() is the thing that defines them.
 -------------------------------------
 In JPSApp:
-1. Created a GridLayout struct that holds origin and cell size info. This is needed for the mouse commands.
+1. Created a reusable GridLayout struct that holds origin and cell size info. This is located here since it is used by Commands, ImGui, rendering...
 2. Created public setting methods which will be toggled by ImGui.
 3. Created an empty GO playing the role of an input target for all commands.
 
@@ -27,10 +27,21 @@ Method also returns if this succeeded -> false if cell is NOT in bounds of the G
 Implemented 3 new JPS Specific Commands. All of them directly modify the Grid via the App itself.
 MOST IMPORTANTLY, the app Recomputes the PATH every time one of these is called:
 1. ToggleWall - Calls the app's ToggleWall method. Command returns early if clicked cell is outside grid or is start/end.
-2.  SetStart - Calls the app's SetStartCell. Command return early if clicked cell is outside grid or is a wall.
-3.  SetGoal - Same as SetStart but for the goal cell.
+2. SetStart - Calls the app's SetStartCell. Command return early if clicked cell is outside grid or is a wall.
+3. SetGoal - Same as SetStart but for the goal cell.
 -------------------------------------
 The JPS App's called functions themselves simply:
 - Call functions from the Grid, modifying the state of the clicked CELL.
--  Call the Grid Renderer to update cells.
+- Call the Grid Renderer to update cells.
 - MOST IMPORTANTLY, it Recomputes the PATH every time one of these is called.
+
+
+Created a ImGui instance scene which updates data of the App which is then distributed to the Grid Renderer and modifies the Grid itself. The ImGui also displays the STATS, read from the app which are cached form the AStar Path computations.
+-------------------------------------
+ImGui does:
+1. Sets Heuristic function from an index. Octile is default (best for JPS).
+2. Visualization toggle for Expanded Cells
+3. Toggle for Generating/Clearing Walls
+4. DISPLAYS THE Algorithm Stats
+-------------------------------------
+Everything supported from the ImGui is followed by a RecomputePath call from the app!

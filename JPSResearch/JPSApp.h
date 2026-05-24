@@ -16,7 +16,7 @@ namespace jps
     class GridRendererComponent;
 
     // Pixel-space layout of Rendered Grid.
-    // Exposed so mouse commands can map mouse coordinates
+    // Lives here since this is used by CommandS, ImGui, rendering...
     struct GridLayout
     {
         float originX;
@@ -37,8 +37,8 @@ namespace jps
 
         // ---- IGameApplication ----
         void Load() override;
-        void Update(float deltaTime) override;
-        void FixedUpdate(float fixedDelta) override;
+        void Update(float) override {};
+        void FixedUpdate(float) override {};
 
         // ---- Read access ----
         const Grid& GetGrid() const noexcept { return *m_Grid; }
@@ -69,22 +69,22 @@ namespace jps
     private:
         void BuildTestGrid();
 
-        std::unique_ptr<Grid> m_Grid;
+        std::unique_ptr<Grid> m_Grid; // OWNS
         Cell m_Start{ 10, 1 };
         Cell m_Goal{ 28, 5 };
-        AStar m_AStar{};
+        AStar m_AStar{}; // OWNS
 
-        GridRendererComponent* m_GridRenderer{ nullptr };
+        GridRendererComponent* m_GridRenderer{ nullptr }; // Cached ref
 
         // Empty GO used as a "target" for the commands
         ge::GameObject* m_InputTarget{ nullptr };
 
         // For imgui:
-        SearchStats m_LastStats{};
+        SearchStats m_LastStats{}; // OWNS
         bool m_LastSearchFound{ false };
         bool m_ShowExpandedCells{ true };
 
         // Cached layout
-        GridLayout m_Layout{ 40.f, 40.f, 24.f };
+        GridLayout m_Layout{ 40.f, 40.f, 24.f }; // OWNS
     };
 }

@@ -44,7 +44,7 @@ namespace jps
 		}
 
 	private:
-		const Grid* m_pGrid{ nullptr }; // Non-owning ref
+		const Grid* m_pGrid{ nullptr }; // Cached ref
 
 		Cell m_Start{};
 		Cell m_Goal{};
