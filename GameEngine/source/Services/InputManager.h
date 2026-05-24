@@ -45,14 +45,24 @@ namespace ge
 			Pressed
 		};
 
+		enum class MouseButton : uint8_t
+		{
+			Left = SDL_BUTTON_LEFT,    // 1
+			Middle = SDL_BUTTON_MIDDLE,  // 2
+			Right = SDL_BUTTON_RIGHT,   // 3
+		};
+
+
 		void BindKeyboardCommand(SDL_Scancode key, InputTrigger trigger, std::unique_ptr<Command> command);
 		void BindControllerCommand(unsigned int button, InputTrigger trigger, std::unique_ptr<Command> command);
 		void BindControllerStickCommand(std::unique_ptr<Command> command);
+		void BindMouseCommand(MouseButton button, std::unique_ptr<Command> command);
 
 		void UnbindAll();
 		void UnbindAllKeyboard();
 		void UnbindAllController();
 		void UnbindAllCommandsOfTarget(GameObject* target);
+		void UnbindAllMouse();
 
 	private:
 		// Acutal PIMPL implementation in .cpp

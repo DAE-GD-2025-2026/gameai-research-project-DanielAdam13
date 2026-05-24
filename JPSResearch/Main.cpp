@@ -19,7 +19,7 @@ int main(int, char* [])
         data_location = "../resources/";
 #endif
 
-    ge::GameEngine::GetInstance().InitializeEngine(data_location);
+    ge::GameEngine::GetInstance().InitializeEngine(data_location, "JPS Research");
 
     jps::JPSApp app{};
     ge::GameEngine::GetInstance().Run(app);

@@ -56,10 +56,10 @@ void jps::GridRendererComponent::RenderComponent() const
     }
 
     // --- 3. Expanded Cells ---
-    /*for (const Cell& c : m_Expanded)
+    for (const Cell& c : m_Expanded)
     {
         DrawCell(r, c.x, c.y, kExpanded, true);
-    }*/
+    }
 
     // --- 4. Grid lines ---
     SDL_SetRenderDrawColor(r, kGridLine.r, kGridLine.g, kGridLine.b, kGridLine.a);

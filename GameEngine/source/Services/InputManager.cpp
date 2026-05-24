@@ -40,11 +40,13 @@
 			void BindKeyboardCommand(SDL_Scancode key, InputManager::InputTrigger trigger, std::unique_ptr<Command> command);
 			void BindControllerCommand(unsigned int button, InputManager::InputTrigger trigger, std::unique_ptr<Command> command);
 			void BindControllerStickCommand(std::unique_ptr<Command> command);
+			void BindMouseCommand(InputManager::MouseButton b, std::unique_ptr<Command> cmd);
 
 			void UnbindAll();
 			void UnbindAllKeyboard();
 			void UnbindAllController();
 			void UnbindAllCommandsOfTarget(GameObject* target);
+			void UnbindAllMouse();
 
 		private:
 	#ifdef _WIN32
@@ -73,6 +75,7 @@
 				InputManager::InputTrigger triggerType;
 				std::unique_ptr<Command> command;
 			};
+			std::vector<KeyBoardBinding> m_KeyboardBindings{};
 
 			struct ControllerBinding
 			{
@@ -80,9 +83,14 @@
 				InputManager::InputTrigger triggerType;
 				std::unique_ptr<Command> command;
 			};
-
-			std::vector<KeyBoardBinding> m_KeyboardBindings{};
 			std::vector<ControllerBinding> m_ControllerBindings{};
+
+			struct MouseBinding
+			{
+				InputManager::MouseButton button;
+				std::unique_ptr<Command> command;
+			};
+			std::vector<MouseBinding> m_MouseBindings{};
 
 			std::unique_ptr<Command> m_LeftStickCommand{};
 
@@ -146,6 +154,10 @@
 		{
 			m_Impl->BindControllerStickCommand(std::move(command));
 		}
+		void InputManager::BindMouseCommand(MouseButton button, std::unique_ptr<Command> command)
+		{
+			m_Impl->BindMouseCommand(button, std::move(command));
+		}
 		void InputManager::UnbindAll()
 		{
 			m_Impl->UnbindAll();
@@ -161,6 +173,10 @@
 		void InputManager::UnbindAllCommandsOfTarget(GameObject* target)
 		{
 			m_Impl->UnbindAllCommandsOfTarget(target);
+		}
+		void InputManager::UnbindAllMouse()
+		{
+			m_Impl->UnbindAllMouse();
 		}
 	}
 
@@ -278,7 +294,14 @@
 
 				if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 				{
-
+					for (auto& mb : m_MouseBindings)
+					{
+						// 1. SDL_MouseButtonEvent::button is a uint8_t with values matching SDL_BUTTON_LEFT/MIDDLE/RIGHT.
+						if (static_cast<uint8_t>(mb.button) == e.button.button)
+						{
+							mb.command->Execute(deltaTime);
+						}
+					}
 				}
 				// etc...
 	#pragma endregion
@@ -440,11 +463,17 @@
 			m_LeftStickCommand = std::move(command);
 		}
 
+		void InputManagerImpl::BindMouseCommand(InputManager::MouseButton b, std::unique_ptr<Command> cmd)
+		{
+			m_MouseBindings.push_back(MouseBinding{ b, std::move(cmd) });
+		}
+
 		void InputManagerImpl::UnbindAll()
 		{
 			m_KeyboardBindings.clear();
 			m_ControllerBindings.clear();
 			m_LeftStickCommand.reset();
+			m_MouseBindings.clear();
 		}
 
 		void InputManagerImpl::UnbindAllKeyboard()
@@ -481,6 +510,17 @@
 				if (command && command->GetCommandTarget() == target)
 					m_LeftStickCommand.reset();
 			}
+
+			std::erase_if(m_MouseBindings, [target](const MouseBinding& binding)
+				{
+					const auto* command{ binding.command.get() };
+					return command && command->GetCommandTarget() == target;
+				});
+		}
+
+		void InputManagerImpl::UnbindAllMouse()
+		{
+			m_MouseBindings.clear();
 		}
 
 		void InputManagerImpl::ApplyRadialDeadzone(float& x, float& y, float deadzone) const

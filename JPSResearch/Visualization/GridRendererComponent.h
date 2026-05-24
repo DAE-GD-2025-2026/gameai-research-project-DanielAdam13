@@ -34,6 +34,8 @@ namespace jps
 
 		void SetPath(std::vector<Cell> path) { m_Path = std::move(path); }
 
+		void SetExpandedCells(std::vector<Cell> expanded) { m_Expanded = std::move(expanded); }
+
 		void SetLayout(float originX, float originY, float cellSize) noexcept
 		{
 			m_OriginX = originX;

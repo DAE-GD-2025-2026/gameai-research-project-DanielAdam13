@@ -29,8 +29,8 @@ namespace jps
         void RecomputePath();
 
         std::unique_ptr<Grid> m_Grid;
-        Cell m_Start{ 1, 1 };
-        Cell m_Goal{ 28, 28 };
+        Cell m_Start{ 10, 1 };
+        Cell m_Goal{ 28, 5 };
         AStar m_AStar{};
 
         GridRendererComponent* m_pRenderer{ nullptr };
