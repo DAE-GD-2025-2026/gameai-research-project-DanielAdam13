@@ -53,6 +53,45 @@ void JPSApp::FixedUpdate(float)
 {
 }
 
+void jps::JPSApp::ToggleWall(Cell c)
+{
+	if (!m_Grid->InBounds(c))
+		return;
+
+	// If walkable -> become wall, if wall -> become walkable
+	const bool currentlyWalkable{ m_Grid->IsWalkable(c) };
+	m_Grid->SetBlocked(c, currentlyWalkable);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
+}
+
+void jps::JPSApp::SetStartCell(Cell c)
+{
+	m_Start = c;
+	if (m_GridRenderer)
+		m_GridRenderer->SetStart(c);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
+}
+
+void jps::JPSApp::SetGoalCell(Cell c)
+{
+	m_Goal = c;
+	if (m_GridRenderer)
+		m_GridRenderer->SetGoal(c);
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
+}
+
 void jps::JPSApp::SetHeuristic(heuristics::Fn h)
 {
 }

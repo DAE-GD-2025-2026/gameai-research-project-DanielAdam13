@@ -48,6 +48,11 @@ namespace jps
         const SearchStats& GetLastStats() const noexcept { return m_LastStats; }
         bool LastSearchFound() const noexcept { return m_LastSearchFound; }
 
+        // ---- Mutating operations (Comamands) ----
+        void ToggleWall(Cell c);
+        void SetStartCell(Cell c);
+        void SetGoalCell(Cell c);
+
         // ---- Settings (ImGui) ----
         void SetHeuristic(heuristics::Fn h);
         void SetAllowCornerCutting(bool allow);
