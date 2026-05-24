@@ -23,6 +23,7 @@ namespace jps
 		// Used for visualization:
 		std::vector<Cell> expandedCells;
 
+		// Returns true if path is not empty
 		bool Found() const noexcept { return !path.empty(); }
 	};
 

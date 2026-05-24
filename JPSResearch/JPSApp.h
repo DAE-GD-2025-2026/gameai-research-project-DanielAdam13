@@ -68,6 +68,7 @@ namespace jps
 
     private:
         void BuildTestGrid();
+        void BindInputCommands();
 
         std::unique_ptr<Grid> m_Grid; // OWNS
         Cell m_Start{ 10, 1 };
