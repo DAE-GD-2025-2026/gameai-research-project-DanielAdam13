@@ -8,8 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #----------------------------------------------------------------------
-# Pull in the engine sitting next to us. This brings in SDL3, SDL3_ttf,
-# glm, ImGui, and defines ge_apply_warnings() + ge_install_runtime().
+# Pull in the engine.
 #----------------------------------------------------------------------
 add_subdirectory(GameEngine)
 

@@ -21,9 +21,7 @@ int main(int, char* [])
 
     ge::GameEngine::GetInstance().InitializeEngine(data_location);
 
-    // TODO: register a sound system if/when you need audio.
-
-    jpsResearch::JPSApp app{};
+    jps::JPSApp app{};
     ge::GameEngine::GetInstance().Run(app);
     return 0;
 }

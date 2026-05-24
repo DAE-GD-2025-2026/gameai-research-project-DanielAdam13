@@ -1,7 +1,7 @@
 #pragma once
 #include "IGameApplication.h"
 
-namespace jpsResearch
+namespace jps
 {
     class JPSApp final : public ge::IGameApplication
     {

@@ -5,17 +5,16 @@
 #include "GameObject.h"
 #include "ResourceManager.h"
 
-namespace jpsResearch
+using namespace jps;
+
+void JPSApp::Load()
 {
-    void JPSApp::Load()
-    {
-    }
+}
 
-    void JPSApp::Update(float)
-    {
-    }
+void JPSApp::Update(float)
+{
+}
 
-    void JPSApp::FixedUpdate(float)
-    {
-    }
+void JPSApp::FixedUpdate(float)
+{
 }
