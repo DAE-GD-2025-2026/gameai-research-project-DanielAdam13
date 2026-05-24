@@ -22,3 +22,15 @@ In JPSApp:
 
 Implemented a MouseToCell() protected method in the base JPS Mouse Command that gets mouse input coordinates and returns the x/y coordinates in the array for a Cell.
 Method also returns if this succeeded -> false if cell is NOT in bounds of the GRID.
+
+
+Implemented 3 new JPS Specific Commands. All of them directly modify the Grid via the App itself.
+MOST IMPORTANTLY, the app Recomputes the PATH every time one of these is called:
+1. ToggleWall - Calls the app's ToggleWall method. Command returns early if clicked cell is outside grid or is start/end.
+2.  SetStart - Calls the app's SetStartCell. Command return early if clicked cell is outside grid or is a wall.
+3.  SetGoal - Same as SetStart but for the goal cell.
+-------------------------------------
+The JPS App's called functions themselves simply:
+- Call functions from the Grid, modifying the state of the clicked CELL.
+-  Call the Grid Renderer to update cells.
+- MOST IMPORTANTLY, it Recomputes the PATH every time one of these is called.
