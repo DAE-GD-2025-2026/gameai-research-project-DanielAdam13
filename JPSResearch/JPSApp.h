@@ -2,6 +2,7 @@
 #include "IGameApplication.h"
 #include "Pathfinding/Grid.h"
 #include "Pathfinding/AStar.h"
+#include "Pathfinding/JPS.h"
 
 #include <memory>
 #include "Pathfinding/Heuristics.h"
@@ -22,6 +23,12 @@ namespace jps
         float originX;
         float originY;
         float cellSize;
+    };
+
+    enum class Algorithm : int
+    {
+        AStar = 0,
+        JPS = 1,
     };
 
 
@@ -47,6 +54,7 @@ namespace jps
         GridLayout GetLayout() const noexcept { return m_Layout; }
         const SearchStats& GetLastStats() const noexcept { return m_LastStats; }
         bool LastSearchFound() const noexcept { return m_LastSearchFound; }
+        Algorithm GetCurrentAlgorithm() const noexcept { return m_CurrentAlgorithm; }
 
         // ---- Mutating operations (Comamands) ----
         void ToggleWall(Cell c);
@@ -55,8 +63,10 @@ namespace jps
 
         // ---- Settings (ImGui) ----
         void SetHeuristic(heuristics::Fn h);
-        void SetAllowCornerCutting(bool allow);
+        void SetAllowCornerCutting(bool allow); // No-op for JPS
         void SetShowExpandedCells(bool show);
+        void SetAlgorithm(Algorithm algo);
+        void SetInterpolateJPSPath(bool interpolate);
 
         // ---- Grid manipulation (ImGui) ----
         void GenerateRandomWalls(int densityPercent);
@@ -73,10 +83,12 @@ namespace jps
         std::unique_ptr<Grid> m_Grid; // OWNS
         Cell m_Start{ 10, 1 };
         Cell m_Goal{ 28, 5 };
+
         AStar m_AStar{}; // OWNS
+        JPS m_JPS{}; // OWNS
+        Algorithm m_CurrentAlgorithm{ Algorithm::AStar };
 
         GridRendererComponent* m_GridRenderer{ nullptr }; // Cached ref
-
         // Empty GO used as a "target" for the commands
         ge::GameObject* m_InputTarget{ nullptr };
 

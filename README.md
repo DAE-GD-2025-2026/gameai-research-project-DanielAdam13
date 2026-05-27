@@ -119,16 +119,9 @@ The mouse commands are bound to the Input Manager:
 - Middle: Goal Cell
 The Stats calculated from the path computing algorithm(AStar for now) is now stored as a member variable which is read from the IMGUI instance and displayed as text.
 
-##  From this point on the specific JPS logic is implemented in the codebase.
+#  From this point on the specific JPS logic is implemented in the codebase.
 
-7) Implemented the following JPS logic in the form of helpers which will be used in the FindPath method:
-- HasForcedNeighbours - two versions - for hor/vert and for diagonal. The logic covers conditions for when a forced neighbour can occur depending on neighbour obstacles from the incoming direction.
-- JUMP - the created method returns the index of a successful jump point, else it returns -1. This method covers the 3 difference variations of a jump point - goal, forced neighbour, Recursion on the hor/vert axes BEFORE going diagonally.
-- GetPruneDirections - Outputs the NATURAL NEIGHBOUR directions from the currently checked node. The whole method revolves around the specific forced neighbour conditions.
-- InterpolatePath - similarly to Reconstructing the Jump Points, uses the jump points to generate the path between them - the DENSE path.
-- SumPathCost - returns the total sum of the jump point to point - the SPARSE path.
-
-## 8. JPS Algorithm Implementation itself:
+## 7. JPS Algorithm Implementation itself:
     It is similar to A* at places, the only parts that are different are the neighbour calculations. The method does:
 1. Returns early if start/end are out of bounds or not walkable.
 2. Pushes the start node to the Node Records and on the OPEN LIST. Increment the nodes Generated stat number.
@@ -140,3 +133,15 @@ The Stats calculated from the path computing algorithm(AStar for now) is now sto
 - Jump Point is MORE OPTIMAL than the G Cost already needed to reach it
 , pushed the Jump Point on the open list and marks it as generated.
 5. Starts calling Jump again but in the already Natural Neighbour directions. Same Jump Point logic as before, if it is optimal, it is pushed on the open list and marked as generated.
+
+## User Feedback for Jump Point Search:
+8) Implemented the following JPS logic in the form of helpers which will be used in the FindPath method:
+- HasForcedNeighbours - two versions - for hor/vert and for diagonal. The logic covers conditions for when a forced neighbour can occur depending on neighbour obstacles from the incoming direction.
+- JUMP - the created method returns the index of a successful jump point, else it returns -1. This method covers the 3 difference variations of a jump point - goal, forced neighbour, Recursion on the hor/vert axes BEFORE going diagonally.
+- GetPruneDirections - Outputs the NATURAL NEIGHBOUR directions from the currently checked node. The whole method revolves around the specific forced neighbour conditions.
+- InterpolatePath - similarly to Reconstructing the Jump Points, uses the jump points to generate the path between them - the DENSE path.
+- SumPathCost - returns the total sum of the jump point to point - the SPARSE path.
+
+9) Added Getters/Setters in the JPS App which directly change a variable for the JPS Algorithm -Show Interpolated Dense Path.
+Algorithm is now switchable from the app. 
+The only thing left is the link with ImGui.

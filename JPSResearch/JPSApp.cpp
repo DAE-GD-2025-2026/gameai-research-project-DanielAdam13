@@ -103,6 +103,7 @@ void jps::JPSApp::SetGoalCell(Cell c)
 void jps::JPSApp::SetHeuristic(heuristics::Fn h)
 {
 	m_AStar.SetHeuristic(h);
+	m_JPS.SetHeuristic(h);
 
 	// --------------------------------
 	// Recompute!
@@ -123,6 +124,26 @@ void jps::JPSApp::SetAllowCornerCutting(bool allow)
 void jps::JPSApp::SetShowExpandedCells(bool show)
 {
 	m_ShowExpandedCells = show;
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
+}
+
+void jps::JPSApp::SetAlgorithm(Algorithm algo)
+{
+	m_CurrentAlgorithm = algo;
+
+	// --------------------------------
+	// Recompute!
+	// --------------------------------
+	RecomputePath();
+}
+
+void jps::JPSApp::SetInterpolateJPSPath(bool interpolate)
+{
+	m_JPS.SetShowInterpolatedPath(interpolate);
 
 	// --------------------------------
 	// Recompute!
@@ -210,11 +231,13 @@ void jps::JPSApp::RecomputePath()
 	if (!m_Grid || !m_GridRenderer) 
 		return;
 
-	const SearchResult result{ m_AStar.FindPath(*m_Grid, m_Start, m_Goal) };
+	const SearchResult result{ (m_CurrentAlgorithm == jps::Algorithm::AStar)
+		? m_AStar.FindPath(*m_Grid, m_Start, m_Goal) : m_JPS.FindPath(*m_Grid, m_Start, m_Goal) };
 
 	m_LastStats = result.stats;
 	m_LastSearchFound = result.Found();
 
 	m_GridRenderer->SetPath(result.path);
-	m_GridRenderer->SetExpandedCells(m_ShowExpandedCells ? result.expandedCells : std::vector<Cell>{});
+	m_GridRenderer->SetExpandedCells(
+		m_ShowExpandedCells ? result.expandedCells : std::vector<Cell>{});
 }

@@ -16,7 +16,7 @@ namespace jps
 		void SetHeuristic(heuristics::Fn h) noexcept { m_Heuristic = h; }
 		bool SetTrackExpanded(bool track) noexcept { m_TrackExpanded = track; }
 
-		void SetInterpolatePath(bool interp) noexcept { m_InterpolatePath = interp; }
+		void SetShowInterpolatedPath(bool interp) noexcept { m_ShowDenseInterpolatedPath = interp; }
 
 		SearchResult FindPath(const Grid& grid, Cell start, Cell goal) const;
 
@@ -25,9 +25,7 @@ namespace jps
 
 		bool m_TrackExpanded{ true };
 
-		bool m_InterpolatePath{ false };
-
-
+		bool m_ShowDenseInterpolatedPath{ false };
 
 	};
 }
