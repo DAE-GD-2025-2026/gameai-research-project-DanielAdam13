@@ -49,7 +49,15 @@ This recursion is stopped when:
 - we reach an obstacle
 - we find a so called "Jump Point successor"
 
-## Explaining it more into detail:
+![Research image](/resources/TheRecursionJump.png?raw=true "The Recursion Jump") The Recursion Jump
+
+On the image above we recursively apply the Diagonal Pruning rule and see that node Y is an excelent Jump Point candidate.
+The important part is the dashed lines - if any of the horizontal or vertical recursions DID identify a node as a Jump Point, 
+the diagonal jump would have stopped and put lower on the priority queue.
+Another thing - node W is a forced neighbour of X on this example.
+
+
+# Explaining it more into detail:
 
 ![Research image](/resources/CoreIdeaNeigbours.png?raw=true "Neighbour Examination") Neighbour Examination
 
