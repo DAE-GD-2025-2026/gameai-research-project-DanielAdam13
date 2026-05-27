@@ -1,5 +1,6 @@
 #include "PathFindingHelpers.h"
 #include "Grid.h"
+#include <cmath>
 
 using namespace jps;
 
@@ -246,7 +247,53 @@ std::vector<Cell> jps::jpsHelpers::ReconstructJumpPoints(const Grid& grid,
     return jumpPoints;
 }
 
-std::vector<Cell> jps::jpsHelpers::InterpolatePath(const std::vector<Cell>&)
+std::vector<Cell> jps::jpsHelpers::InterpolatePath(const std::vector<Cell>& jumpPoints)
 {
-    return std::vector<Cell>();
+    if (jumpPoints.size() < 2) 
+        return jumpPoints;
+
+    std::vector<Cell> dense;
+    dense.push_back(jumpPoints.front());
+
+    // For every jump point (besides the end goal)
+    for (size_t i{ 1 }; i < jumpPoints.size(); ++i)
+    {
+        const Cell& a{ jumpPoints[i - 1] };
+        const Cell& b{ jumpPoints[i] };
+        const int sx{ Sign(b.x - a.x) };
+        const int sy{ Sign(b.y - a.y) };
+
+        int x{ a.x };
+        int y{ a.y };
+
+        // Just build and push the path for each jump point to point path
+        while (x != b.x || y != b.y)
+        {
+            x += sx;
+            y += sy;
+            dense.push_back(Cell{ x, y });
+        }
+    }
+
+    return dense;
+}
+
+float jps::jpsHelpers::SumPathCost(const std::vector<Cell>& jumpPoints) noexcept
+{
+    float cost{ 0.f };
+
+    for (size_t i{ 1 }; i < jumpPoints.size(); ++i)
+    {
+        const int dx{ std::abs(jumpPoints[i].x - jumpPoints[i - 1].x) };
+        const int dy{ std::abs(jumpPoints[i].y - jumpPoints[i - 1].y) };
+        const int diag{ std::min(dx, dy) };
+
+        const int straight{ std::max(dx,dy) - diag };
+
+        cost += static_cast<float>(diag) * helpers::DiagonalCost +
+            static_cast<float>(straight) * helpers::StraightCost;
+
+    }
+
+    return cost;
 }

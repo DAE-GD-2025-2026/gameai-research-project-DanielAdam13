@@ -112,9 +112,14 @@ namespace jps
 		// -------------------------------------------
 		// Path reconstruction
 		// -------------------------------------------
+		// Returns the jump points - the SPARSE path
 		std::vector<Cell> ReconstructJumpPoints(const Grid& gird,
 			const std::vector<helpers::NodeRecord>& records, int goalIdx);
 
+		// Returns every single node checked from jump point to point - the DENSE path
 		std::vector<Cell> InterpolatePath(const std::vector<Cell>& jumpPoints);
+
+		// Total cost of the SPARSE path (sums distances between jump points)
+		float SumPathCost(const std::vector<Cell>& jumpPoints) noexcept;
 	}
 }
