@@ -24,14 +24,46 @@ void jps::JPSControlsImGui::RenderImGui()
 	ImGui::TextUnformatted("Algorithm");
 	ImGui::Separator();
 
+	if (ImGui::Combo("Algorithm##algo", &m_AlgorithmIndex,
+		imguiHelpers::kAlgorithmNames, IM_ARRAYSIZE(imguiHelpers::kAlgorithmNames)))
+	{
+		m_App->SetAlgorithm(static_cast<jps::Algorithm>(m_AlgorithmIndex));
+	}
+
 	if (ImGui::Combo("Heuristic", &m_HeuristicIndex, imguiHelpers::kHeuristicNames, IM_ARRAYSIZE(imguiHelpers::kHeuristicNames)))
 	{
 		m_App->SetHeuristic(imguiHelpers::HeuristicForIndex(m_HeuristicIndex));
 	}
 
-	if (ImGui::Checkbox("Allow corner cutting", &m_AllowCornerCutting))
+	// Corner cutting only affects A*. Disable the control when JPS is active
 	{
-		m_App->SetAllowCornerCutting(m_AllowCornerCutting);
+		const bool isJPS{ (m_AlgorithmIndex == 1) };
+		if (isJPS) 
+			ImGui::BeginDisabled();
+
+		if (ImGui::Checkbox("Allow corner cutting (A* Only)", &m_AllowCornerCutting))
+		{
+			m_App->SetAllowCornerCutting(m_AllowCornerCutting);
+		}
+		if (isJPS)
+		{
+			ImGui::EndDisabled();
+			ImGui::TextDisabled("  JPS pruning assumes no corner cutting.");
+		}
+
+	}
+
+	{
+		const bool isJPS = (m_AlgorithmIndex == 1);
+		if (!isJPS) 
+			ImGui::BeginDisabled();
+		if (ImGui::Checkbox("Interpolate JPS path (fill in between jump points)", &m_InterpolateJPSPath))
+		{
+			m_App->SetInterpolateJPSPath(m_InterpolateJPSPath);
+		}
+		if (!isJPS) 
+			ImGui::EndDisabled();
+
 	}
 
 	// -----------------------------------------------------------------

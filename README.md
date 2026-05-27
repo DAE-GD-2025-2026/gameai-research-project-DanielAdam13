@@ -86,7 +86,7 @@ This happens ONCE by simply building a test level with walls and calling the AST
 - Created public setting methods which will be toggled by ImGui.
 - Created an empty GO playing the role of an input target for all commands.
 
-## Then user feedback logic is needed using ImGui
+## Then comes User Feedback via ImGui
 3) Created a base JPS mouse command class from which specific JPS game command are derived. OnClick() is the thing that defines them.
 
 Implemented a MouseToCell() protected method in the base JPS Mouse Command that gets mouse input coordinates and returns the x/y coordinates in the array for a Cell.
@@ -98,12 +98,12 @@ MOST IMPORTANTLY, the app Recomputes the PATH every time one of these is called:
 - SetStart - Calls the app's SetStartCell. Command return early if clicked cell is outside grid or is a wall.
 - SetGoal - Same as SetStart but for the goal cell.
 
-The JPS App's called functions themselves simply:
+5) The JPS App's called functions themselves simply:
 - Call functions from the Grid, modifying the state of the clicked CELL.
 - Call the Grid Renderer to update cells.
 - MOST IMPORTANTLY, it Recomputes the PATH every time one of these is called.
 
-5) Created a ImGui instance scene which updates data of the App which is then distributed to the Grid Renderer and modifies the Grid itself. The ImGui also displays the STATS, read from the app which are cached form the AStar Path computations.
+6) Created a ImGui instance scene which updates data of the App which is then distributed to the Grid Renderer and modifies the Grid itself. The ImGui also displays the STATS, read from the app which are cached form the AStar Path computations.
 ImGui does:
 - Sets Heuristic function from an index. Octile is default (best for JPS).
 - Visualization toggle for Expanded Cells
@@ -112,7 +112,7 @@ ImGui does:
 
 Everything supported from the ImGui is followed by a RecomputePath call from the app!
 
-6) Created a Game Object "handle" playing the role of an input target for the commands.
+7) Created a Game Object "handle" playing the role of an input target for the commands.
 The mouse commands are bound to the Input Manager:
 - Left: Walls
 - Right: Start Cell
@@ -121,7 +121,7 @@ The Stats calculated from the path computing algorithm(AStar for now) is now sto
 
 #  From this point on the specific JPS logic is implemented in the codebase.
 
-## 7. JPS Algorithm Implementation itself:
+## 8. JPS Algorithm Implementation itself:
     It is similar to A* at places, the only parts that are different are the neighbour calculations. The method does:
 1. Returns early if start/end are out of bounds or not walkable.
 2. Pushes the start node to the Node Records and on the OPEN LIST. Increment the nodes Generated stat number.
@@ -135,13 +135,16 @@ The Stats calculated from the path computing algorithm(AStar for now) is now sto
 5. Starts calling Jump again but in the already Natural Neighbour directions. Same Jump Point logic as before, if it is optimal, it is pushed on the open list and marked as generated.
 
 ## User Feedback for Jump Point Search:
-8) Implemented the following JPS logic in the form of helpers which will be used in the FindPath method:
+9) Implemented the following JPS logic in the form of helpers which will be used in the FindPath method:
 - HasForcedNeighbours - two versions - for hor/vert and for diagonal. The logic covers conditions for when a forced neighbour can occur depending on neighbour obstacles from the incoming direction.
 - JUMP - the created method returns the index of a successful jump point, else it returns -1. This method covers the 3 difference variations of a jump point - goal, forced neighbour, Recursion on the hor/vert axes BEFORE going diagonally.
 - GetPruneDirections - Outputs the NATURAL NEIGHBOUR directions from the currently checked node. The whole method revolves around the specific forced neighbour conditions.
 - InterpolatePath - similarly to Reconstructing the Jump Points, uses the jump points to generate the path between them - the DENSE path.
 - SumPathCost - returns the total sum of the jump point to point - the SPARSE path.
 
-9) Added Getters/Setters in the JPS App which directly change a variable for the JPS Algorithm -Show Interpolated Dense Path.
-Algorithm is now switchable from the app. 
-The only thing left is the link with ImGui.
+10) Added Getters/Setters in the JPS App which directly change a variable for the JPS Algorithm -Show Interpolated Dense Path. Algorithm is now switchable from the app. 
+
+For JPS, the ImGui logic makes the following changes:
+- First, a Combo box to switch between A* and JPS is added.
+- The checkbox for corner cutting is DISABLED for JPS
+- Checkbox for Interpolated JPS Path is added, which is disabled during A* of course
