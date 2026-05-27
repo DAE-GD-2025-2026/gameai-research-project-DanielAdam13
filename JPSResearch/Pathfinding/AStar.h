@@ -9,8 +9,8 @@ namespace jps
 	// Statistics gathered during a search. Will use for comparison JPS <-> Astar
 	struct SearchStats
 	{
-		int nodesExpanded{ 0 }; // Times a node was POPPED from the open list
-		int nodesGenerated{ 0 }; // Times a node was PUSHED on the open list
+		int nodesExpanded{ 0 }; // These nodes were at one point CHECKED and then POPPED from the open list
+		int nodesGenerated{ 0 }; // Locked-in, sure nodes PUSHED on the open list
 		int pathLength{ 0 };
 		float pathCost{ 0.f };
 	};

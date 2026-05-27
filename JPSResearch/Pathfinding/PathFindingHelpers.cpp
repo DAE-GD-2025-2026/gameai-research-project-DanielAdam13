@@ -102,7 +102,7 @@ int jps::jpsHelpers::Jump(const Grid& grid, int x, int y, Dir d, Cell goal)
     const int nx{ x + d.dx };
     const int ny{ y + d.dy };
 
-    // EXCEPTION WHEN REACHING Wall/End of map
+    // EXCEPTION WHEN REACHING Wall/End of map when going right
     if (!grid.IsWalkable(nx, ny)) 
         return -1;
 

@@ -12,7 +12,7 @@ JPS tries to skip over some nodes that are not valuable to look at directly.
 
 ### The two main differences are:
 1. Pruned neighbours - instead of generating and wasting all 8 immediate neighbors of a node, we generate only the "Natural" and "Forced" Neighbours(see below)
-2. Jumpig - for each direction you'd normally step in, we apply RECURSIVE Jump(see below) until we reach a node of interest. Then we put ONLY
+2. Jumping - for each direction you'd normally step in, we apply RECURSIVE Jump(see below) until we reach a node of interest. Then we put ONLY
 that node in the open list - skipping every cell in between.
 
 This means JPS is more memory efficient than A*. The nodes in between the Jump Points(see below) DO get examined, but they're never processed. 
@@ -125,3 +125,18 @@ The Stats calculated from the path computing algorithm(AStar for now) is now sto
 - HasForcedNeighbours - two versions - for hor/vert and for diagonal. The logic covers conditions for when a forced neighbour can occur depending on neighbour obstacles from the incoming direction.
 - JUMP - the created method returns the index of a successful jump point, else it returns -1. This method covers the 3 difference variations of a jump point - goal, forced neighbour, Recursion on the hor/vert axes BEFORE going diagonally.
 - GetPruneDirections - Outputs the NATURAL NEIGHBOUR directions from the currently checked node. The whole method revolves around the specific forced neighbour conditions.
+- InterpolatePath - similarly to Reconstructing the Jump Points, uses the jump points to generate the path between them - the DENSE path.
+- SumPathCost - returns the total sum of the jump point to point - the SPARSE path.
+
+## 8. JPS Algorithm Implementation itself:
+    It is similar to A* at places, the only parts that are different are the neighbour calculations. The method does:
+1. Returns early if start/end are out of bounds or not walkable.
+2. Pushes the start node to the Node Records and on the OPEN LIST. Increment the nodes Generated stat number.
+3. Inside the open List loop, checks if the current node is already in closed or with the same FCost and returns early if so.
+4. Marks the current node as expanded and checks if it is the GOAL. If so, the whole algorithm returns the result and stops. The Jump Points are reconstructed from the Node Record, the Path is calculated along with its cost.
+- Filters the PRUNED NEIGHBOUR directions by Jumping across all possible 8 directions from the start of the current node. It then calls the Jump function and IF:
+- Jump Point is not a dead end
+- Jump Point is not already in closed
+- Jump Point is MORE OPTIMAL than the G Cost already needed to reach it
+, pushed the Jump Point on the open list and marks it as generated.
+5. Starts calling Jump again but in the already Natural Neighbour directions. Same Jump Point logic as before, if it is optimal, it is pushed on the open list and marked as generated.
