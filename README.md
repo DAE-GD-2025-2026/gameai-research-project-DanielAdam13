@@ -4,6 +4,19 @@ Jump Point Search is an algorithm that improves upon normal A* pathfinding.
 At its core, A* expands its search by doing the simplest thing possible: adding a node's immediate neighbours to the set of what to examine next.
 JPS tries to skip over some nodes that are not valuable to look at directly.
 
+    JPS is NOT a different search algorithm - it's a different neighbour function plugged into the same A* skeleton. This means:
+    - same open list
+    - same closed list
+    - same g/f costs
+    - same parent pointers
+
+### The two main differences are:
+1. Pruned neighbours - instead of generating and wasting all 8 immediate neighbors of a node, we generate only the "Natural" and "Forced" Neighbours(see below)
+2. Jumpig - for each direction you'd normally step in, we apply RECURSIVE Jump(see below) until we reach a node of interest. Then we put ONLY
+that node in the open list - skipping every cell in between.
+
+This means JPS is more memory efficient than A*. The nodes in between the Jump Points(see below) DO get examined, but they're never processed. 
+This is the main difference between JPS and A*.
 
 
 # The Algorithm
@@ -36,7 +49,7 @@ This recursion is stopped when:
 - we reach an obstacle
 - we find a so called "Jump Point successor"
 
-### Explaining it more into detail:
+## Explaining it more into detail:
 
 ![Research image](/resources/CoreIdeaNeigbours.png?raw=true "Neighbour Examination") Neighbour Examination
 
