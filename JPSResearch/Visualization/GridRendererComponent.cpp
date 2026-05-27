@@ -14,6 +14,7 @@ namespace jps
         constexpr SDL_Color kPath{ 60, 140, 240, 255 };
         constexpr SDL_Color kStart{ 60, 200,  90, 255 };
         constexpr SDL_Color kGoal{ 230,  80,  80, 255 };
+        constexpr SDL_Color kJumpPoint{ 250, 180, 40, 255 };
     }
 }
 
@@ -79,7 +80,23 @@ void jps::GridRendererComponent::RenderComponent() const
     // --- 5. Path line through cell centres ---
     DrawPathLine(r);
 
-    // --- 6. Start and goal markers ---
+    // --- 6. Jump points (JPS only — empty for A*) ---
+    {
+        const float inset{ m_CellSize * 0.3f };
+        const float size{ m_CellSize - 2.f * inset };
+        SDL_SetRenderDrawColor(r, kJumpPoint.r, kJumpPoint.g, kJumpPoint.b, kJumpPoint.a);
+        for (const Cell& c : m_JumpPoints)
+        {
+            SDL_FRect rect{
+                m_OriginX + static_cast<float>(c.x) * m_CellSize + inset,
+                m_OriginY + static_cast<float>(c.y) * m_CellSize + inset,
+                size, size
+            };
+            SDL_RenderFillRect(r, &rect);
+        }
+    }
+
+    // --- 7. Start and goal markers ---
     if (m_HasStart && m_pGrid->InBounds(m_Start))
     {
         DrawCell(r, m_Start.x, m_Start.y, kStart, true);

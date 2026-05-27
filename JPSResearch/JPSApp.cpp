@@ -19,8 +19,8 @@ namespace jps
 {
 	namespace
 	{
-		constexpr int kGridWidth{ 40 };
-		constexpr int kGridHeight{ 40 };
+		constexpr int kGridWidth{ 30 };
+		constexpr int kGridHeight{ 30 };
 	}
 }
 
@@ -240,4 +240,5 @@ void jps::JPSApp::RecomputePath()
 	m_GridRenderer->SetPath(result.path);
 	m_GridRenderer->SetExpandedCells(
 		m_ShowExpandedCells ? result.expandedCells : std::vector<Cell>{});
+	m_GridRenderer->SetJumpPoints(result.jumpPoints);
 }

@@ -36,6 +36,8 @@ namespace jps
 
 		void SetExpandedCells(std::vector<Cell> expanded) { m_Expanded = std::move(expanded); }
 
+		void SetJumpPoints(std::vector<jps::Cell> jumpPoints) { m_JumpPoints = std::move(jumpPoints); }
+
 		void SetLayout(float originX, float originY, float cellSize) noexcept
 		{
 			m_OriginX = originX;
@@ -53,6 +55,7 @@ namespace jps
 
 		std::vector<Cell> m_Path;
 		std::vector<Cell> m_Expanded;
+		std::vector<jps::Cell> m_JumpPoints;
 
 		float m_OriginX{ 40.f };
 		float m_OriginY{ 40.f };

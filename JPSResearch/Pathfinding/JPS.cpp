@@ -64,9 +64,11 @@ jps::SearchResult jps::JPS::FindPath(const Grid& grid, Cell start, Cell goal) co
 		{
 			// Reconstruct all jump points + path from the NodeRecord
 			std::vector<Cell> jumpPoints{ jpsHelpers::ReconstructJumpPoints(grid, records, goalIdx) };
-			result.path = m_ShowDenseInterpolatedPath ? jpsHelpers::InterpolatePath(jumpPoints) : jumpPoints;
-			result.stats.pathLength = static_cast<int>(result.path.size());
+			result.jumpPoints = jumpPoints; // always exposed
+			result.path = m_ShowDenseInterpolatedPath ? 
+				jpsHelpers::InterpolatePath(jumpPoints) : result.jumpPoints; 
 			result.stats.pathCost = jpsHelpers::SumPathCost(jumpPoints);
+			result.stats.pathLength = static_cast<int>(result.path.size());
 			return result;
 		}
 
