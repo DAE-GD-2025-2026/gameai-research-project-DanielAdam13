@@ -9,7 +9,8 @@ add_executable(jpsResearch WIN32
  "Visualization/GridRendererComponent.h" "Visualization/GridRendererComponent.cpp" 
  "Commands/JPSMouseCommand.h" "Commands/JPSMouseCommand.cpp" 
  "Commands/JPSCommands.h" "Commands/JPSCommands.cpp" 
- "JPSControlsImGui.h" "JPSControlsImGui.cpp")
+ "JPSControlsImGui.h" "JPSControlsImGui.cpp" 
+ "Pathfinding/JPS.h" "Pathfinding/JPS.cpp")
 
 target_include_directories(jpsResearch PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

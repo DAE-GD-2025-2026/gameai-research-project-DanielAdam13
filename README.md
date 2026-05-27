@@ -67,59 +67,61 @@ Another exception assumption:
 
 # Implementation Details
 
+## First, the generic A* skeleton needs to be created.
 1) Created a Grid Renderer Component and attached it to a dedicated single game object pushed and updated on a scene.
--------------------------------------
+
 The Grid Renderer only used the Render() method and inside it:
 - Draws background
 - Draws walls as filled rectangles
 - Draws expanded cells
 - Draws all grid lines
 - DRAWS THE PATH LINE
-- Draws filled rects for start and goal
--------------------------------------
+- Draws filled rects for start and goal.
+
 The JPS app creates and assigns the grid, start and goal to the Render Component and computes the path.
 This happens ONCE by simply building a test level with walls and calling the ASTAR ALGORITHM foe the path calculation
 
-
-2) Created a base JPS mouse command class from which specific JPS game command are derived. OnClick() is the thing that defines them.
--------------------------------------
-In JPSApp:
+2) In JPSApp:
 - Created a reusable GridLayout struct that holds origin and cell size info. This is located here since it is used by Commands, ImGui, rendering...
 - Created public setting methods which will be toggled by ImGui.
 - Created an empty GO playing the role of an input target for all commands.
 
+## Then user feedback logic is needed using ImGui
+3) Created a base JPS mouse command class from which specific JPS game command are derived. OnClick() is the thing that defines them.
 
-3) Implemented a MouseToCell() protected method in the base JPS Mouse Command that gets mouse input coordinates and returns the x/y coordinates in the array for a Cell.
+Implemented a MouseToCell() protected method in the base JPS Mouse Command that gets mouse input coordinates and returns the x/y coordinates in the array for a Cell.
 Method also returns if this succeeded -> false if cell is NOT in bounds of the GRID.
-
 
 4) Implemented 3 new JPS Specific Commands. All of them directly modify the Grid via the App itself.
 MOST IMPORTANTLY, the app Recomputes the PATH every time one of these is called:
 - ToggleWall - Calls the app's ToggleWall method. Command returns early if clicked cell is outside grid or is start/end.
 - SetStart - Calls the app's SetStartCell. Command return early if clicked cell is outside grid or is a wall.
 - SetGoal - Same as SetStart but for the goal cell.
--------------------------------------
+
 The JPS App's called functions themselves simply:
 - Call functions from the Grid, modifying the state of the clicked CELL.
 - Call the Grid Renderer to update cells.
 - MOST IMPORTANTLY, it Recomputes the PATH every time one of these is called.
 
-
 5) Created a ImGui instance scene which updates data of the App which is then distributed to the Grid Renderer and modifies the Grid itself. The ImGui also displays the STATS, read from the app which are cached form the AStar Path computations.
--------------------------------------
 ImGui does:
-1. Sets Heuristic function from an index. Octile is default (best for JPS).
-2. Visualization toggle for Expanded Cells
-3. Toggle for Generating/Clearing Walls
-4. DISPLAYS THE Algorithm Stats
--------------------------------------
+- Sets Heuristic function from an index. Octile is default (best for JPS).
+- Visualization toggle for Expanded Cells
+- Toggle for Generating/Clearing Walls
+- DISPLAYS THE Algorithm Stats.
+
 Everything supported from the ImGui is followed by a RecomputePath call from the app!
 
-
-6) Created a GO "handle" playing the role of an input target for the commands.
+6) Created a Game Object "handle" playing the role of an input target for the commands.
 The mouse commands are bound to the Input Manager:
 - Left: Walls
 - Right: Start Cell
 - Middle: Goal Cell
--------------------------------------
 The Stats calculated from the path computing algorithm(AStar for now) is now stored as a member variable which is read from the IMGUI instance and displayed as text.
+
+##  From this point on the specific JPS logic is implemented in the codebase.
+
+7) Implemented the following JPS logic in the form of helpers which will be used in the FindPath method:
+- HasForcedNeighbours - two versions - for hor/vert and for diagonal. The logic covers conditions for when a forced neighbour can occur depending on neighbour obstacles from the incoming direction.
+- JUMP - the created method returns the index of a successful jump point, else it returns -1. This method covers the 3 difference variations of a jump point - goal, forced neighbour, Recursion on the hor/vert axes BEFORE going diagonally.
+- GetPruneDirections - Outputs the NATURAL NEIGHBOUR directions from the currently checked node. The whole method revolves around the specific forced neighbour conditions.

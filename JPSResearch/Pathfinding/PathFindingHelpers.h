@@ -64,4 +64,57 @@ namespace jps
 		// Walk the parent pointers from goal back to start.
 		std::vector<Cell> ReconstructPath(const Grid& grid, const std::vector<NodeRecord>& records, int goalIndex);
 	}
+
+	namespace jpsHelpers
+	{
+		struct Dir {
+			int dx;
+			int dy;
+		};
+
+		// Clamps values for dirX and dirY to { -1, 0, +1} because
+		// the start node does not have a parent and a Jump Point might be many cells away...
+		int Sign(int v) noexcept;
+		// Direction from parent we arrived FROM
+		Dir DirectionFromParent(int px, int py, int cx, int cy) noexcept;
+
+		inline bool IsDiagonal(Dir d) noexcept { return d.dx != 0 && d.dy != 0; }
+		inline bool IsHorOrVert(Dir d) noexcept { return (d.dx == 0) != (d.dy == 0); }
+
+		float StepCost(Dir d) noexcept;
+
+		// -------------------------------------------
+		// Forced Neighbour method
+		// -------------------------------------------
+		bool HasForcedNeighbourHorOrVert(const Grid& grid, int x, int y, Dir d) noexcept;
+
+		bool HasForcedNeighbourDiagonal(const Grid& grid, int x, int y, Dir d) noexcept;
+
+		// -------------------------------------------
+		// JUMP
+		// -------------------------------------------
+		// From(x, y), step once in direction d, then recursively jump in
+		// the same direction. Return the first jump point encountered, or -1 if the search runs off the grid / into a wall.
+		// A jump point is:
+        //   1) the goal
+        //   2) a cell with a forced neighbour (hor/vert or diagonal)
+        //   3) (diagonal only) a cell from which a cardinal jump in either
+        //      of d's component directions finds its own jump point
+		int Jump(const Grid& grid, int x, int y, Dir d, Cell goal);
+
+		// -------------------------------------------
+		// Pruned successor set
+		// -------------------------------------------
+		// We input the direction of arrival and return the directions we should try to jump in. (to the Natural Neighbours)
+		void GetPrunedDirections(const Grid& grid, int x, int y, Dir parentDir,
+			Dir(&out)[5], int& outCount);
+
+		// -------------------------------------------
+		// Path reconstruction
+		// -------------------------------------------
+		std::vector<Cell> ReconstructJumpPoints(const Grid& gird,
+			const std::vector<helpers::NodeRecord>& records, int goalIdx);
+
+		std::vector<Cell> InterpolatePath(const std::vector<Cell>& jumpPoints);
+	}
 }
