@@ -19,8 +19,8 @@ namespace jps
 {
 	namespace
 	{
-		constexpr int kGridWidth{ 40 };
-		constexpr int kGridHeight{ 40 };
+		constexpr int kGridWidth{ 30 };
+		constexpr int kGridHeight{ 30 };
 	}
 }
 
@@ -28,7 +28,7 @@ using namespace jps;
 
 void JPSApp::Load()
 {
-	ge::Renderer::GetInstance().SetWindowSize({ 1200, 1200 });
+	ge::Renderer::GetInstance().SetWindowSize({ 1000, 1000 });
 
 	// 1. Build the Grid
 	m_Grid = std::make_unique<Grid>(kGridWidth, kGridHeight);
