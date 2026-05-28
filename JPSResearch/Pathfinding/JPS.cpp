@@ -107,7 +107,7 @@ jps::SearchResult jps::JPS::FindPath(const Grid& grid, Cell start, Cell goal) co
 				// =======================================
 				// JUMP
 				// =======================================
-				const int jpIdx{ jpsHelpers::Jump(grid, cx, cy, all8[i], goal) };
+				const int jpIdx{ jpsHelpers::Jump(grid, cx, cy, all8[i], goal, result.stats.cellsScanned) };
 				// If jump is invalid, continue to next direction
 				if (jpIdx == -1)
 					continue;
@@ -152,7 +152,7 @@ jps::SearchResult jps::JPS::FindPath(const Grid& grid, Cell start, Cell goal) co
 			// =======================================
 			// JUMP
 			// =======================================
-			const int jpIdx{ jpsHelpers::Jump(grid, cx, cy, dirs[i], goal) };
+			const int jpIdx{ jpsHelpers::Jump(grid, cx, cy, dirs[i], goal, result.stats.cellsScanned) };
 			if (jpIdx == -1) 
 				continue;
 

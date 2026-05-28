@@ -100,7 +100,7 @@ namespace jps
         //   2) a cell with a forced neighbour (hor/vert or diagonal)
         //   3) (diagonal only) a cell from which a cardinal jump in either
         //      of d's component directions finds its own jump point
-		int Jump(const Grid& grid, int x, int y, Dir d, Cell goal);
+		int Jump(const Grid& grid, int x, int y, Dir d, Cell goal, int& cellsScanned);
 
 		// -------------------------------------------
 		// Pruned successor set

@@ -112,6 +112,7 @@ void jps::JPSControlsImGui::RenderImGui()
 	ImGui::Text("Path cost:   %.3f", s.pathCost);
 	ImGui::Text("Expanded:    %d", s.nodesExpanded);
 	ImGui::Text("Generated:   %d", s.nodesGenerated);
+	ImGui::Text("Scanned(JPS Only):   %d", s.cellsScanned);
 
 	// -----------------------------------------------------------------
 	// Controls Usage help

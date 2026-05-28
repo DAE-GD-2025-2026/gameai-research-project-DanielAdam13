@@ -97,7 +97,7 @@ bool jps::jpsHelpers::HasForcedNeighbourDiagonal(const Grid& grid, int x, int y,
 
 }
 
-int jps::jpsHelpers::Jump(const Grid& grid, int x, int y, Dir d, Cell goal)
+int jps::jpsHelpers::Jump(const Grid& grid, int x, int y, Dir d, Cell goal, int& cellsScanned)
 {
     const int nx{ x + d.dx };
     const int ny{ y + d.dy };
@@ -112,6 +112,9 @@ int jps::jpsHelpers::Jump(const Grid& grid, int x, int y, Dir d, Cell goal)
         if (!grid.IsWalkable(x + d.dx, y) || !grid.IsWalkable(x, y + d.dy))
             return -1;
     }
+
+    // Committed to stepping into {nx, ny}. Add to "examined" JPS cells.
+    ++cellsScanned;
 
     // (1) Goal reached !!!
     if (nx == goal.x && ny == goal.y)
@@ -135,17 +138,17 @@ int jps::jpsHelpers::Jump(const Grid& grid, int x, int y, Dir d, Cell goal)
         }
 
         // (3) Recurse along the hor and vert BEFORE continuing diagonally
-        if (Jump(grid, nx, ny, Dir{d.dx, 0}, goal) != -1)
+        if (Jump(grid, nx, ny, Dir{d.dx, 0}, goal, cellsScanned) != -1)
         {
             return static_cast<int>(grid.Index(nx, ny)); // Jump
         }
-        if(Jump(grid, nx, ny, Dir{0, d.dy}, goal) != -1)
+        if(Jump(grid, nx, ny, Dir{0, d.dy}, goal, cellsScanned) != -1)
         {
             return static_cast<int>(grid.Index(nx, ny)); // Jump
         }
     }
 
-    return Jump(grid, nx, ny, d, goal); // Else, keep jumping recursively
+    return Jump(grid, nx, ny, d, goal, cellsScanned); // Else, keep jumping recursively
 }
 
 void jps::jpsHelpers::GetPrunedDirections(const Grid& grid, int x, int y, Dir parentDir, Dir(&out)[5], int& outCount)

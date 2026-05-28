@@ -13,6 +13,8 @@ namespace jps
 		int nodesGenerated{ 0 }; // Locked-in, sure nodes PUSHED on the open list
 		int pathLength{ 0 };
 		float pathCost{ 0.f };
+
+		int cellsScanned{ 0 }; // JPS only - cells walked over inside Jump() but never expanded
 	};
 
 	struct SearchResult
