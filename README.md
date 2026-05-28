@@ -21,16 +21,18 @@ This is the main difference between JPS and A*.
 
 # The Algorithm
 
-At the base of JPS sits the fundamental rules of Neighbour Prunning applied during each search:
+At the base of JPS sits the fundamental rules of Neighbour Pruning applied during each search:
 One rule is applied to straight steps while the other - for diagonal.
 The main idea behind both cases is to remove/prune a set of immediate neighbours around a node by trying to prove
-that a PATH from the parent node of the currently one exists to each neighbour while the path does not invlolve the current node.
+that a PATH from the parent node of the current one exists to each neighbour while the path does not involve the current node.
 
-![Research image](/resources/NeighbourPrunning.png?raw=true "Neighbour Prunning") Neighbour Prunning
+(This implementation uses the no-corner-cutting variant (Harabor & Grastien 2012), online with no preprocessing)
+
+![Research image](/resources/NeighbourPrunning.png?raw=true "Neighbour Pruning") Neighbour Pruning
 
 Node X is being expanded with the arrow signifying the direction it has been reached from its parent. 
 In both cases we can prune/remove the greyed out neighbours as these can be reached optimally from the neighbour without going through X.
-The remaining nodes AFTER prunning are called "Natural Neighbours" of the node. These are the ones marked with white on the image above.
+The remaining nodes AFTER pruning are called "Natural Neighbours" of the node. These are the ones marked with white on the image above.
 
     Ideally the cheapest and most efficient approach would be to only process the set of Natural Neighbours but this is not always the case.
 
@@ -72,6 +74,50 @@ Another exception assumption:
 
 ![Research image](/resources/JumpBlocked.png?raw=true "Forced Neighbours") If the way is blocked as we jump to the right, we can disregard the ENTIRE jump. This is because we've already assumed that the paths above and below have already been handled by other AND we haven't stopped because of a Forced Diagonal Neighbour. We only care about what's immediately to our right which means there's nowhere else to go.
 
+# A* versus JPS
+
+As mentioned before, the only difference between A* and JPS is the neighbour calculations and the jumping algorithm. 
+
+The FACT that JPS expands to way less nodes is real and it is shown on the table below. The expanded cells are the ones highlighted in blue:
+
+![Research image](/resources/Example_Astar.png?raw=true "A*") Astar ![Research image](/resources/Example_JPS.png?raw=true "JPS") JPS
+
+If you've read thoroughly, you might say "Yes, but the highlighted cells for JPS and not ALL of the nodes that the algorithm processes".
+And you would be correct - on the JPS image you can see that the Scanned(JPS Only) field displays the actual number of the "Processed" nodes - 1136 for JPS, 0 for A*.
+
+However, let's clear something up: Scanned cells are NOT as expensive as Expanded cells.
+The scanned nodes do not apply any heap operations and no node-record writes, they only go through a few cheap conditions checks:
+- Is the cell walkable?
+- Does it have forced neighbours(which is a combination of 2-4 IsWalkable checks)
+- An integer add to advance the Neighbour cell index
+
+What happens when A* expands a cell:
+- A priority queue pop which shifts down all elements in the heap.
+- A loop over UP TO 8 neighbours and calculating g-cost, heuristic and updating the Record of nodes.
+
+### Comparison table - A* vs JPS
+
+A benchmark is run through different map types:
+- Empty: 0% walls
+- Very Sparse - 5% of the grid is walls
+- Sparse - 10% of the grid is walls
+- Dense - 30% is walls
+
+![Research image](/resources/Comp_Table.png?raw=true "A*")
+![Research image](/resources/Comp_Stats.png?raw=true "A*")
+
+The benchmark generates a random grid map and runs both A* and JPS storing both their expanded cells and in the case of JPS - scanned nodes. 
+
+For every test, both A* and JPS successfully find the shortest path to the goal - same cost, same length.
+
+# Conclusion
+
+    Jump Point Search extends A* through two additions - neighbour pruning and recursive jumping - that together let it skip over regions of the grid that A* would expand cell by cell.
+
+    The benchmarks also clarify why JPS is faster, and it is not simply "less work". On open maps JPS frequently scans more cells than A* expands, yet still runs faster, because a scanned cell costs only a few array reads while an expanded cell costs a priority-queue pop, a heuristic evaluation, and several node-record updates.
+
+    Jump Point Search is therefore best suited to large, sparse, uniform-cost grids - a condition needed in many game maps.
+
 
 # Implementation Details
 
@@ -87,7 +133,7 @@ The Grid Renderer only used the Render() method and inside it:
 - Draws filled rects for start and goal.
 
 The JPS app creates and assigns the grid, start and goal to the Render Component and computes the path.
-This happens ONCE by simply building a test level with walls and calling the ASTAR ALGORITHM foe the path calculation
+This happens ONCE by simply building a test level with walls and calling the ASTAR ALGORITHM for the path calculation.
 
 2) In JPSApp:
 - Created a reusable GridLayout struct that holds origin and cell size info. This is located here since it is used by Commands, ImGui, rendering...
@@ -162,7 +208,7 @@ For JPS, the ImGui logic makes the following changes:
 
 # References Section
 
-### Visual Explainations
+### Visual Explanations
 
 - https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search/#try-it-out
 - https://harablog.wordpress.com/2011/09/07/jump-point-search/
