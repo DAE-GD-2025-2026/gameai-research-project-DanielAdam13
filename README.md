@@ -90,18 +90,11 @@ The FACT that JPS expands to way less nodes is real and it is shown on the table
 
 <table>
   <tr>
-    <td><img src="/resources/Example_Astar.png?raw=true" alt="A*" /></td>
-  </tr>
-  <tr>
-    <td align="center">A*</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
+    <td><img src="/resources/Example_AStar.png?raw=true" alt="A*" /></td>
     <td><img src="/resources/Example_JPS.png?raw=true" alt="JPS" /></td>
   </tr>
   <tr>
+    <td align="center">A*</td>
     <td align="center">JPS</td>
   </tr>
 </table>
