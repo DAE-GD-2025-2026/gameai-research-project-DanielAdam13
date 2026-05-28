@@ -135,11 +135,14 @@ The Stats calculated from the path computing algorithm(AStar for now) is now sto
 2. Pushes the start node to the Node Records and on the OPEN LIST. Increment the nodes Generated stat number.
 3. Inside the open List loop, checks if the current node is already in closed or with the same FCost and returns early if so.
 4. Marks the current node as expanded and checks if it is the GOAL. If so, the whole algorithm returns the result and stops. The Jump Points are reconstructed from the Node Record, the Path is calculated along with its cost.
-- Filters the PRUNED NEIGHBOUR directions by Jumping across all possible 8 directions from the start of the current node. It then calls the Jump function and IF:
+Depending on whether the current node is the Starting or any other node, PRUNED NEIGHBOUR directions are calculated by
+Jumping across all possible 8 directions from the start of the current node. 
+It then calls the Jump function and IF:
 - Jump Point is not a dead end
 - Jump Point is not already in closed
 - Jump Point is MORE OPTIMAL than the G Cost already needed to reach it
-, pushed the Jump Point on the open list and marks it as generated.
+
+,it pushes the Jump Point on the open list and marks it as generated.
 5. Starts calling Jump again but in the already Natural Neighbour directions. Same Jump Point logic as before, if it is optimal, it is pushed on the open list and marked as generated.
 
 ### User Feedback for Jump Point Search:
@@ -156,3 +159,18 @@ For JPS, the ImGui logic makes the following changes:
 - First, a Combo box to switch between A* and JPS is added.
 - The checkbox for corner cutting is DISABLED for JPS
 - Checkbox for Interpolated JPS Path is added, which is disabled during A* of course
+
+# References Section
+
+### Visual Explainations
+
+- https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search/#try-it-out
+- https://harablog.wordpress.com/2011/09/07/jump-point-search/
+
+### Documentation Papers
+
+- https://harabor.net/data/papers/harabor-grastien-aaai11.pdf
+
+### Implementation Guides
+
+- https://gamedev.net/tutorials/programming/artificial-intelligence/jump-point-search-fast-a-pathfinding-for-uniform-cost-grids-r4220/
