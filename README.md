@@ -72,7 +72,15 @@ The direction worth checking is marked with the white arrow.
 
 Another exception assumption:
 
-![Research image](/resources/JumpBlocked.png?raw=true "Forced Neighbours") If the way is blocked as we jump to the right, we can disregard the ENTIRE jump. This is because we've already assumed that the paths above and below have already been handled by other AND we haven't stopped because of a Forced Diagonal Neighbour. We only care about what's immediately to our right which means there's nowhere else to go.
+<img src="/resources/JumpBlocked.png?raw=true" alt="Jump Blocked" align="left" width="300" />
+
+If the way is blocked as we jump to the right, we can disregard the ENTIRE jump.
+This is because we've already assumed that the paths above and below have already
+been handled by other branches, and we haven't stopped because of a Forced Diagonal
+Neighbour. We only care about what's immediately to our right, which means there's
+nowhere else to go.
+
+<br clear="all" />
 
 # A* versus JPS
 
@@ -80,7 +88,16 @@ As mentioned before, the only difference between A* and JPS is the neighbour cal
 
 The FACT that JPS expands to way less nodes is real and it is shown on the table below. The expanded cells are the ones highlighted in blue:
 
-![Research image](/resources/Example_Astar.png?raw=true "A*") Astar ![Research image](/resources/Example_JPS.png?raw=true "JPS") JPS
+<table>
+  <tr>
+    <td><img src="/resources/Example_Astar.png?raw=true" alt="A*" /></td>
+    <td><img src="/resources/Example_JPS.png?raw=true" alt="JPS" /></td>
+  </tr>
+  <tr>
+    <td align="center">A*</td>
+    <td align="center">JPS</td>
+  </tr>
+</table>
 
 If you've read thoroughly, you might say "Yes, but the highlighted cells for JPS and not ALL of the nodes that the algorithm processes".
 And you would be correct - on the JPS image you can see that the Scanned(JPS Only) field displays the actual number of the "Processed" nodes - 1136 for JPS, 0 for A*.
@@ -95,7 +112,7 @@ What happens when A* expands a cell:
 - A priority queue pop which shifts down all elements in the heap.
 - A loop over UP TO 8 neighbours and calculating g-cost, heuristic and updating the Record of nodes.
 
-### Comparison table - A* vs JPS
+## Comparison table - A* vs JPS
 
 A benchmark is run through different map types:
 - Empty: 0% walls
@@ -103,8 +120,12 @@ A benchmark is run through different map types:
 - Sparse - 10% of the grid is walls
 - Dense - 30% is walls
 
-![Research image](/resources/Comp_Table.png?raw=true "A*")
-![Research image](/resources/Comp_Stats.png?raw=true "A*")
+<table>
+  <tr>
+    <td><img src="/resources/Comp_Table.png?raw=true" alt="Table" /></td>
+    <td><img src="/resources/Comp_Stats.png?raw=true" alt="Table" /></td>
+  </tr>
+</table>
 
 The benchmark generates a random grid map and runs both A* and JPS storing both their expanded cells and in the case of JPS - scanned nodes. 
 
