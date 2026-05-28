@@ -14,7 +14,7 @@ namespace jps
 		JPS() = default;
 
 		void SetHeuristic(heuristics::Fn h) noexcept { m_Heuristic = h; }
-		bool SetTrackExpanded(bool track) noexcept { m_TrackExpanded = track; }
+		void SetTrackExpanded(bool track) noexcept { m_TrackExpanded = track; }
 
 		void SetShowInterpolatedPath(bool interp) noexcept { m_ShowDenseInterpolatedPath = interp; }
 

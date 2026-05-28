@@ -67,10 +67,10 @@ bool jps::jpsHelpers::HasForcedNeighbourHorOrVert(const Grid& grid, int x, int y
 {
     if (d.dx != 0) // Moving horizontally
     {
-        if (grid.IsWalkable(x - d.dx, y - d.dy) && grid.IsWalkable(x, y - 1))
+        if (!grid.IsWalkable(x - d.dx, y - d.dy) && grid.IsWalkable(x, y - 1))
             return true;
 
-        if (grid.IsWalkable(x - d.dx, y + 1) && grid.IsWalkable(x, y + 1))
+        if (!grid.IsWalkable(x - d.dx, y + 1) && grid.IsWalkable(x, y + 1))
             return true;
     }
     else // Vertically

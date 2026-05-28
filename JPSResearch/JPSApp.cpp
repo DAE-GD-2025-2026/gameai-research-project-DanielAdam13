@@ -19,8 +19,8 @@ namespace jps
 {
 	namespace
 	{
-		constexpr int kGridWidth{ 30 };
-		constexpr int kGridHeight{ 30 };
+		constexpr int kGridWidth{ 40 };
+		constexpr int kGridHeight{ 40 };
 	}
 }
 
@@ -32,7 +32,7 @@ void JPSApp::Load()
 
 	// 1. Build the Grid
 	m_Grid = std::make_unique<Grid>(kGridWidth, kGridHeight);
-	BuildTestGrid();
+	//BuildTestGrid();
 
 	// 2. Create scene + Game Object holding the Grid Renderer
 	ge::Scene& scene{ ge::SceneManager::GetInstance().CreateScene("JPSDemo") };

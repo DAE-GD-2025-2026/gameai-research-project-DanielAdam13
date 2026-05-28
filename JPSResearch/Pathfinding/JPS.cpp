@@ -49,8 +49,8 @@ jps::SearchResult jps::JPS::FindPath(const Grid& grid, Cell start, Cell goal) co
 		// ----------------------------------------
 		// EXPANDED - same as A*
 		// ----------------------------------------
-		current.inClosed = false;
-		current.inOpen = true;
+		current.inClosed = true;
+		current.inOpen = false;
 		++result.stats.nodesExpanded;
 
 		const int cx{ currentIdx % W };

@@ -81,8 +81,8 @@ namespace jps
         void BindInputCommands();
 
         std::unique_ptr<Grid> m_Grid; // OWNS
-        Cell m_Start{ 10, 1 };
-        Cell m_Goal{ 28, 5 };
+        Cell m_Start{ 0, 0 };
+        Cell m_Goal{ 39, 39 };
 
         AStar m_AStar{}; // OWNS
         JPS m_JPS{}; // OWNS
